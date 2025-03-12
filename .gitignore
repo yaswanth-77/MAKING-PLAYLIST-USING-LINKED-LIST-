@@ -1,52 +1,73 @@
-# Prerequisites
-*.d
+#include <stdio.h> 
+#include <stdlib.h> 
+#include <string.h> 
 
-# Object files
-*.o
-*.ko
-*.obj
-*.elf
+// Define the structure for a song 
+struct Song { 
+    char title[100]; 
+    char artist[100]; 
+    int duration; 
+    struct Song* next; 
+}; 
 
-# Linker output
-*.ilk
-*.map
-*.exp
+// Function to create a new song node 
+struct Song* createSong(const char* title, const char* artist, int duration) { 
+    struct Song* newSong = (struct Song*)malloc(sizeof(struct Song)); 
+    if (newSong == NULL) { 
+        printf("Memory allocation failed\n"); 
+        exit(1); 
+    } 
+    strcpy(newSong->title, title); 
+    strcpy(newSong->artist, artist); 
+    newSong->duration = duration; 
+    newSong->next = NULL; 
+    return newSong; 
+} 
 
-# Precompiled Headers
-*.gch
-*.pch
+// Function to add a song to the playlist 
+void addSong(struct Song** playlist, struct Song* newSong) { 
+    if (*playlist == NULL) { 
+        *playlist = newSong; 
+    } else { 
+        struct Song* current = *playlist; 
+        while (current->next != NULL) { 
+            current = current->next; 
+        } 
+        current->next = newSong; 
+    } 
+} 
 
-# Libraries
-*.lib
-*.a
-*.la
-*.lo
+// Function to display the playlist 
+void displayPlaylist(struct Song* playlist) { 
+    struct Song* current = playlist; 
+    while (current != NULL) { 
+        printf("Title: %s\nArtist: %s\nDuration: %d seconds\n\n", current->title, current->artist, current->duration); 
+        current = current->next; 
+    } 
+} 
 
-# Shared objects (inc. Windows DLLs)
-*.dll
-*.so
-*.so.*
-*.dylib
+// Function to free memory allocated for the playlist 
+void freePlaylist(struct Song* playlist) { 
+    while (playlist != NULL) { 
+        struct Song* temp = playlist; 
+        playlist = playlist->next; 
+        free(temp); 
+    } 
+} 
 
-# Executables
-*.exe
-*.out
-*.app
-*.i*86
-*.x86_64
-*.hex
+int main() { 
+    struct Song* playlist = NULL; 
 
-# Debug files
-*.dSYM/
-*.su
-*.idb
-*.pdb
+    // Add songs to the playlist 
+    addSong(&playlist, createSong("Song 1", "Artist 1", 180)); 
+    addSong(&playlist, createSong("Song 2", "Artist 2", 240)); 
+    addSong(&playlist, createSong("Song 3", "Artist 3", 210)); 
 
-# Kernel Module Compile Results
-*.mod*
-*.cmd
-.tmp_versions/
-modules.order
-Module.symvers
-Mkfile.old
-dkms.conf
+    // Display the playlist 
+    displayPlaylist(playlist); 
+
+    // Free memory 
+    freePlaylist(playlist); 
+
+    return 0; 
+}
